@@ -2,7 +2,7 @@
 
 The state of the project. Tick boxes as work completes; a phase is **done** only when its Accept line passes. Do not start a phase before the previous one ships. Phase 5+ items are picked by daily-use need, in any order.
 
-**Current phase: 0 — not started**
+**Current phase: 0 — scaffolding done, owner authoring server handlers**
 
 ## v1 = Phases 0-4
 

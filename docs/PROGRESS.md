@@ -11,6 +11,14 @@ Template:
 **Next:** the single most important next action
 ```
 
+## 2026-09-30 — Phase 0 scaffolding (AI + owner)
+
+**Shipped:** Go module scaffold (`go.mod`, `cmd/habitx-server`, `internal/{habits,auth,server}`, `db/{migrations,queries}`, Makefile, README) and Expo app (`habitx-mobile`, SDK 57, expo-router tabs template, demo tab and modal trimmed). Fixed a nested-git accident: `habitx-server/` had its own `.git` (reflog shows an initial commit with the scaffold files and a misleading "project charter" subject) — removed it and folded everything into the root monorepo. Toolchain verified: Go 1.27.1, Node 26.7.0, npm 11.19.
+
+**Learned:** repo now teaches the monorepo rule — nested `.git` directories silently exclude files from the parent's `git add -A`.
+
+**Next:** owner writes `cmd/habitx-server/main.go` (healthz + hardcoded habits handlers) and one httptest; AI reviews after.
+
 ## 2026-09-22 — onboarding (AI + owner)
 
 **Shipped:** project charter. Decisions: Go API + Postgres from day 1 - stdlib net/http only - sqlc with owner hand-writing all SQL (deliberate break of the AI-authored-data-layer habit) - Expo + expo-router + TanStack Query + NativeWind - frozen thin v1 (CRUD, check-off, streaks) - JWT auth from day 1 (sequenced as Phase 3) - Expo Go dev loop, release APK sideload at v1 - $0 deploy target Oracle Cloud Always Free - future web UI via react-native-web, no stack change. Created AGENTS.md, docs/ROADMAP.md, docs/PROGRESS.md, docs/LEARNINGS.md.
