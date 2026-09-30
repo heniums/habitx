@@ -1,0 +1,9 @@
+# Binaries
+habitx-server
+*.exe
+
+# Test / coverage
+*.out
+
+# Env
+.env
