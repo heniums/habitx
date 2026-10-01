@@ -9,13 +9,13 @@ Two things live here.
 
 ### Go
 
-- [ ] modules and toolchain (go run / test / fmt / vet) — level: not started
+- [ ] modules and toolchain (go run / test / fmt / vet) — level: solo
 - [ ] structs, methods, interfaces — level: not started
 - [ ] error values, wrapping with %w, errors.Is/As — level: not started
-- [ ] net/http ServeMux routing and handlers — level: not started
+- [ ] net/http ServeMux routing and handlers — level: solo
 - [ ] context.Context conventions — level: not started
 - [ ] database/sql + pgx — level: not started
-- [ ] table-driven tests, httptest — level: not started
+- [ ] table-driven tests, httptest — level: solo
 - [ ] middleware chaining — level: not started
 - [ ] JWT + bcrypt in Go — level: not started
 - [ ] time and timezone handling — level: not started
@@ -48,4 +48,7 @@ Two things live here.
 
 Format: `date - area - lesson`. Newest first.
 
+- 2026-10-01 - testing - Go compiles per directory; test files live in the same directory (and usually the same package) as the code they test
+- 2026-10-01 - error handling - `if err := <some-function call>; err != nil {}` is a very common way quickly check error
+- 2026-10-01 - git - gitignore bare-name matching at every depth; anchor with `/`; debug via `git check-ignore -v`
 - 2026-09-22 - process - tracking lives in repo files (this set), not in any single AI tool's memory, so any helper can resume cold.

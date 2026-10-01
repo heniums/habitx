@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http/httptest"
 	"testing"
 )
@@ -27,5 +28,19 @@ func TestRoutes(t *testing.T) {
 				t.Errorf("got status %d, want %d", rec.Code, tt.wantStatus)
 			}
 		})
+	}
+}
+
+func TestListHabits(t *testing.T) {
+	req := httptest.NewRequest("GET", "/habits", nil)
+	rec := httptest.NewRecorder()
+	newMux().ServeHTTP(rec, req)
+
+	var got []Habit
+	if err := json.NewDecoder(rec.Result().Body).Decode(&got); err != nil {
+		t.Fatalf("decode %v", err)
+	}
+	if len(got) != 3 || got[0].ID != "habit1" {
+		t.Errorf("got %d habits, first habitID %q; want 3 habits; first ID habit1", len(got), got[0].ID)
 	}
 }

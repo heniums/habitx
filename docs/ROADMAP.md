@@ -12,10 +12,10 @@ API surface: `POST /users` - `POST /tokens` - `GET /me` - `GET|POST /habits` - `
 
 ### Phase 0 — End to end in a weekend
 
-- [ ] Go module boots, `GET /healthz` returns JSON
-- [ ] `GET /habits` returns a hardcoded slice (no DB yet)
-- [ ] Expo app runs on the phone via Expo Go, renders the list from the server (LAN IP)
-- [ ] One handler covered by a table-driven httptest
+- [x] Go module boots, `GET /healthz` returns JSON
+- [x] `GET /habits` returns a hardcoded slice (no DB yet)
+- [x] Expo app runs on the phone via Expo Go, renders the list from the server (LAN IP)
+- [x] One handler covered by a table-driven httptest
 
 Concepts: Go modules and toolchain - structs/methods - slices/maps - error values - JSON encoding - ServeMux routing - expo-router file tree - View/Text/StyleSheet - fetch-to-localhost trap (LAN IP)
 
