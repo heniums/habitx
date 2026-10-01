@@ -1,5 +1,5 @@
 # Binaries
-habitx-server
+/habitx-server
 *.exe
 
 # Test / coverage
