@@ -21,7 +21,7 @@ func TestRoutes(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req := httptest.NewRequest(tt.method, tt.path, nil)
 			rec := httptest.NewRecorder()
-			newMux().ServerHTTP(rec, req)
+			newMux().ServeHTTP(rec, req)
 
 			if rec.Code != tt.wantStatus {
 				t.Errorf("got status %d, want %d", rec.Code, tt.wantStatus)
