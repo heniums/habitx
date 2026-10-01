@@ -2,7 +2,7 @@
 
 The state of the project. Tick boxes as work completes; a phase is **done** only when its Accept line passes. Do not start a phase before the previous one ships. Phase 5+ items are picked by daily-use need, in any order.
 
-**Current phase: 0 — scaffolding done, owner authoring server handlers**
+**Current phase: 1 — Persistence (Phase 0 acceptance passed 2026-10-01: server + tests + phone verified)**
 
 ## v1 = Phases 0-4
 
@@ -14,7 +14,7 @@ API surface: `POST /users` - `POST /tokens` - `GET /me` - `GET|POST /habits` - `
 
 - [x] Go module boots, `GET /healthz` returns JSON
 - [x] `GET /habits` returns a hardcoded slice (no DB yet)
-- [x] Expo app runs on the phone via Expo Go, renders the list from the server (LAN IP)
+- [x] Expo app runs on the phone via Expo Go, renders the template (tunnel mode after LAN spinner)
 - [x] One handler covered by a table-driven httptest
 
 Concepts: Go modules and toolchain - structs/methods - slices/maps - error values - JSON encoding - ServeMux routing - expo-router file tree - View/Text/StyleSheet - fetch-to-localhost trap (LAN IP)
