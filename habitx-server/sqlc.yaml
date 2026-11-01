@@ -1,0 +1,2 @@
+driver: postgres
+dsn: "postgres://habitx:habitx@localhost:5433/habitx?sslmode=disable"

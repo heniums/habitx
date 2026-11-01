@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: habitx-db
+    environment:
+      POSTGRES_USER: habitx
+      POSTGRES_PASSWORD: habitx
+      POSTGRES_DB: habitx
+    ports:
+      - "5433:5432"
+    volumes:
+      - habitx-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habitx"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+
+volumes:
+  habitx-pgdata:
