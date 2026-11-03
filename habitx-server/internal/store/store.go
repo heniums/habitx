@@ -4,8 +4,8 @@ import (
 	"context"
 	"os"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/heniums/habitx-server/db"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // New opens a connection pool and returns sqlc-backed queries.
