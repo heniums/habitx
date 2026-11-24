@@ -1,6 +1,6 @@
 # Server
 run:
-	go run ./cmd/habitx-server
+	HABITX_DB_DSN="postgres://habitx:habitx@localhost:5433/habitx?sslmode=disable" go run ./cmd/habitx-server
 
 test:
 	go test ./...
