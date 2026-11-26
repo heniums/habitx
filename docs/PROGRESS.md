@@ -11,6 +11,14 @@ Template:
 **Next:** the single most important next action
 ```
 
+## 2026-11-26 — Graceful shutdown + dedupe review (AI review, owner authored)
+
+**Shipped:** owner rewrote `main()`: `http.Server` with `ReadHeaderTimeout`, `signal.NotifyContext` (SIGINT/SIGTERM), `ListenAndServe` in a goroutine with buffered `errCh`, `select` on `ctx.Done()` vs server death, `Shutdown` with fresh 10s-timeout context. Extracted `newHabitJSON` (4 copies → 1). Deleted dead nil-guard in `listHabits` (make'd `out` guarantees JSON `[]`). Decision: no `writeJSON` helper — duplication judged small enough; revisit at the 7th copy.
+
+**Learned:** goroutines/channels/select/defer; `log.Fatal` skips deferred cleanup; `ErrServerClosed` + buffered channel prevents goroutine leak on shutdown; context as a cancellable signal threaded through the call chain (`r.Context()` into every query); nil slice encodes as `null` but `make`'d empty slice as `[]`; shadowing a type name with a variable is legal but poor style.
+
+**Next:** mobile half of Phase 1 — TanStack Query hooks + create-habit form + FlatList against this API. (Optional 30-second cleanup: rename the `habitJSON` variable that shadows the type name.)
+
 ## 2026-10-01 — Phase 0 shipped (owner + AI)
 
 **Shipped:** Phase 0 acceptance passed. Owner hand-wrote `main.go` (healthz + listHabits, method-pinned routes, `newMux()` shape), fixed 4 compiler errors, wrote table-driven tests (`TestRoutes` with 405 guard + `TestListHabitsBody` decode assertions) — all green uncached. Expo app rendered on phone via Expo Go in tunnel mode (LAN spinner = Wi-Fi isolation; `--tunnel` fixed). Fixed my own scaffold bug: unanchored `habitx-server` gitignore rule was silently un-tracking `cmd/habitx-server/` source — owner caught it.
