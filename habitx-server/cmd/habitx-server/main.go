@@ -6,6 +6,9 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/heniums/habitx-server/db"
@@ -21,12 +24,23 @@ type habitJSON struct {
 	CreatedAt string `json:"created_at"`
 }
 
+func newHabitJSON(dbHabit db.Habit) habitJSON {
+	out := habitJSON{
+		ID:        dbHabit.ID.String(),
+		Name:      dbHabit.Name,
+		Color:     dbHabit.Color,
+		CreatedAt: dbHabit.CreatedAt.Time.Format(time.RFC3339),
+	}
+	return out
+}
+
 type server struct {
 	queries *db.Queries
 }
 
 func (s *server) healthz(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	if err := json.NewEncoder(w).Encode(struct {
 		Status string `json:"status"`
 	}{Status: "ok"}); err != nil {
@@ -56,12 +70,7 @@ func (s *server) getHabit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	habitJSON := habitJSON{
-		ID:        habit.ID.String(),
-		Name:      habit.Name,
-		Color:     habit.Color,
-		CreatedAt: habit.CreatedAt.Time.Format(time.RFC3339),
-	}
+	habitJSON := newHabitJSON(habit)
 
 	if err := json.NewEncoder(w).Encode(habitJSON); err != nil {
 		http.Error(w, "encoding fail", http.StatusInternalServerError)
@@ -111,12 +120,7 @@ func (s *server) updateHabit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	habitJSON := habitJSON{
-		ID:        habit.ID.String(),
-		Name:      habit.Name,
-		Color:     habit.Color,
-		CreatedAt: habit.CreatedAt.Time.Format(time.RFC3339),
-	}
+	habitJSON := newHabitJSON(habit)
 
 	if err := json.NewEncoder(w).Encode(habitJSON); err != nil {
 		http.Error(w, "encoding fail", http.StatusInternalServerError)
@@ -171,12 +175,7 @@ func (s *server) createHabit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	out := habitJSON{
-		ID:        habit.ID.String(),
-		Name:      habit.Name,
-		Color:     habit.Color,
-		CreatedAt: habit.CreatedAt.Time.Format(time.RFC3339),
-	}
+	out := newHabitJSON(habit)
 
 	w.WriteHeader(http.StatusCreated)
 
@@ -195,18 +194,9 @@ func (s *server) listHabits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if habits == nil {
-		habits = []db.Habit{}
-	}
-
 	out := make([]habitJSON, 0, len(habits))
 	for _, h := range habits {
-		out = append(out, habitJSON{
-			ID:        h.ID.String(),
-			Name:      h.Name,
-			Color:     h.Color,
-			CreatedAt: h.CreatedAt.Time.Format(time.RFC3339),
-		})
+		out = append(out, newHabitJSON(h))
 	}
 
 	if err := json.NewEncoder(w).Encode(out); err != nil {
@@ -229,14 +219,29 @@ func (s *server) routes() *http.ServeMux {
 }
 
 func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
 	queries, pool, err := store.New(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	defer pool.Close()
 
 	s := &server{queries: queries}
+	srv := &http.Server{Addr: ":8080", Handler: s.routes(), ReadHeaderTimeout: 5 * time.Second}
 
-	log.Fatal(http.ListenAndServe(":8080", s.routes()))
+	errCh := make(chan error, 1)
+	go func() { errCh <- srv.ListenAndServe() }()
+
+	select {
+	case <-ctx.Done():
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := srv.Shutdown(shutdownCtx); err != nil {
+			log.Printf("shutdown: %v", err)
+		}
+	case err := <-errCh:
+		log.Fatal(err)
+	}
 }
