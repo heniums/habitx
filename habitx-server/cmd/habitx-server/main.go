@@ -80,7 +80,7 @@ func (s *server) updateHabit(w http.ResponseWriter, r *http.Request) {
 
 	// Decode request body
 	var request struct {
-		Name string `json:"name"`
+		Name  string `json:"name"`
 		Color string `json:"color"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -94,9 +94,9 @@ func (s *server) updateHabit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updateParams := db.UpdateHabitParams {
-		ID: id,
-		Name: request.Name,
+	updateParams := db.UpdateHabitParams{
+		ID:    id,
+		Name:  request.Name,
 		Color: request.Color,
 	}
 
@@ -123,7 +123,24 @@ func (s *server) updateHabit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
- 
+
+func (s *server) deleteHabit(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var id pgtype.UUID
+	if err := id.Scan(r.PathValue("id")); err != nil {
+		http.Error(w, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	if err := s.queries.DeleteHabit(r.Context(), id); err != nil {
+		http.Error(w, "fail to delete habit", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (s *server) listHabits(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -160,6 +177,7 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc("GET /habits", s.listHabits)
 	mux.HandleFunc("GET /habits/{id}", s.getHabit)
 	mux.HandleFunc("PUT /habits/{id}", s.updateHabit)
+	mux.HandleFunc("DELETE /habits/{id}", s.deleteHabit)
 
 	return mux
 }
