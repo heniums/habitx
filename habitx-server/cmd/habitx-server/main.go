@@ -141,6 +141,51 @@ func (s *server) deleteHabit(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (s *server) createHabit(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// Decode request body
+	var request struct {
+		Name  string `json:"name"`
+		Color string `json:"color"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, "invalid json", http.StatusBadRequest)
+		return
+	}
+
+	// Body validation
+	if request.Name == "" || request.Color == "" {
+		http.Error(w, "name and color required", http.StatusBadRequest)
+		return
+	}
+
+	args := db.CreateHabitParams{
+		Name:  request.Name,
+		Color: request.Color,
+	}
+
+	habit, err := s.queries.CreateHabit(r.Context(), args)
+	if err != nil {
+		http.Error(w, "fail to create habit", http.StatusInternalServerError)
+		return
+	}
+
+	out := habitJSON{
+		ID:        habit.ID.String(),
+		Name:      habit.Name,
+		Color:     habit.Color,
+		CreatedAt: habit.CreatedAt.Time.Format(time.RFC3339),
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	if err := json.NewEncoder(w).Encode(out); err != nil {
+		http.Error(w, "encoding fail", http.StatusInternalServerError)
+		return
+	}
+}
+
 func (s *server) listHabits(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -176,6 +221,7 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc("GET /healthz", s.healthz)
 	mux.HandleFunc("GET /habits", s.listHabits)
 	mux.HandleFunc("GET /habits/{id}", s.getHabit)
+	mux.HandleFunc("POST /habits", s.createHabit)
 	mux.HandleFunc("PUT /habits/{id}", s.updateHabit)
 	mux.HandleFunc("DELETE /habits/{id}", s.deleteHabit)
 
