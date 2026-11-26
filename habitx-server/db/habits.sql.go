@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createHabit = `-- name: CreateHabit :one
@@ -22,6 +24,34 @@ type CreateHabitParams struct {
 
 func (q *Queries) CreateHabit(ctx context.Context, arg CreateHabitParams) (Habit, error) {
 	row := q.db.QueryRow(ctx, createHabit, arg.Name, arg.Color)
+	var i Habit
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Color,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const deleteHabit = `-- name: DeleteHabit :exec
+DELETE FROM habits
+WHERE id = $1
+`
+
+func (q *Queries) DeleteHabit(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteHabit, id)
+	return err
+}
+
+const getHabit = `-- name: GetHabit :one
+SELECT id, name, color, created_at
+FROM habits
+WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetHabit(ctx context.Context, id pgtype.UUID) (Habit, error) {
+	row := q.db.QueryRow(ctx, getHabit, id)
 	var i Habit
 	err := row.Scan(
 		&i.ID,
@@ -61,4 +91,31 @@ func (q *Queries) ListHabits(ctx context.Context) ([]Habit, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateHabit = `-- name: UpdateHabit :one
+UPDATE habits
+SET
+  name = $2,
+  color = $3
+WHERE id = $1
+RETURNING id, name, color, created_at
+`
+
+type UpdateHabitParams struct {
+	ID    pgtype.UUID
+	Name  string
+	Color string
+}
+
+func (q *Queries) UpdateHabit(ctx context.Context, arg UpdateHabitParams) (Habit, error) {
+	row := q.db.QueryRow(ctx, updateHabit, arg.ID, arg.Name, arg.Color)
+	var i Habit
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Color,
+		&i.CreatedAt,
+	)
+	return i, err
 }
