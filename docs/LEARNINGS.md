@@ -13,8 +13,8 @@ Two things live here.
 - [ ] structs, methods, interfaces — level: not started
 - [ ] error values, wrapping with %w, errors.Is/As — level: not started
 - [ ] net/http ServeMux routing and handlers — level: solo
-- [ ] context.Context conventions — level: not started
-- [ ] database/sql + pgx — level: not started
+- [ ] context.Context conventions — level: help
+- [ ] database/sql + pgx — level: help
 - [ ] table-driven tests, httptest — level: solo
 - [ ] middleware chaining — level: not started
 - [ ] JWT + bcrypt in Go — level: not started
@@ -22,7 +22,7 @@ Two things live here.
 
 ### SQL
 
-- [ ] DDL and migration discipline — level: not started
+- [ ] DDL and migration discipline — level: solo
 - [ ] joins and aggregates — level: not started
 - [ ] composite PKs, idempotent writes — level: not started
 - [ ] window functions (Phase 5) — level: not started
@@ -48,6 +48,8 @@ Two things live here.
 
 Format: `date - area - lesson`. Newest first.
 
+- 2026-11-26 - go - struct tags take their quotes inside the backticks (`json:"name"`); `go vet` catches malformed tag grammar
+- 2026-11-26 - http - POST creation answers 201 Created, not the default 200; the status code is part of the API contract
 - 2026-10-01 - testing - Go compiles per directory; test files live in the same directory (and usually the same package) as the code they test
 - 2026-10-01 - error handling - `if err := <some-function call>; err != nil {}` is a very common way quickly check error
 - 2026-10-01 - git - gitignore bare-name matching at every depth; anchor with `/`; debug via `git check-ignore -v`

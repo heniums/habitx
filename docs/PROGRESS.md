@@ -11,6 +11,14 @@ Template:
 **Next:** the single most important next action
 ```
 
+## 2026-11-26 — Phase 1 server-side complete (owner + AI, catch-up entry)
+
+**Shipped:** Server half of Phase 1, merged via PRs #1 and #2. docker-compose Postgres + goose wiring; owner hand-wrote `0001_habits.sql` (first hand-written migration); all five habit queries in `db/queries/habits.sql` feeding sqlc codegen; `internal/store` (pgxpool + sqlc; AI scaffold, owner integrated); full CRUD handlers — `GET|POST /habits`, `GET|PUT|DELETE /habits/{id}`, 201 on create; DB-backed integration tests via goose-as-library `TestDB` (owner-authored, isolated per-run database) + handler endpoint tests. This entry back-fills October→November sessions that were never logged.
+
+**Learned:** struct tags take their quotes inside the backticks (`json:"name"`) — `go vet` catches the malformed grammar; POST creation answers 201 Created, not the default 200; goose can run as a library to give each test run its own database.
+
+**Next:** mobile half of Phase 1 — TanStack Query hooks, create-habit form, FlatList on the habits tab. Then the accept test: create a habit on the phone, restart the server, habit survives.
+
 ## 2026-10-01 — Phase 0 shipped (owner + AI)
 
 **Shipped:** Phase 0 acceptance passed. Owner hand-wrote `main.go` (healthz + listHabits, method-pinned routes, `newMux()` shape), fixed 4 compiler errors, wrote table-driven tests (`TestRoutes` with 405 guard + `TestListHabitsBody` decode assertions) — all green uncached. Expo app rendered on phone via Expo Go in tunnel mode (LAN spinner = Wi-Fi isolation; `--tunnel` fixed). Fixed my own scaffold bug: unanchored `habitx-server` gitignore rule was silently un-tracking `cmd/habitx-server/` source — owner caught it.

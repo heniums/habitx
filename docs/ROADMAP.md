@@ -23,11 +23,11 @@ Concepts: Go modules and toolchain - structs/methods - slices/maps - error value
 
 ### Phase 1 — Persistence
 
-- [ ] docker-compose runs Postgres
-- [ ] Migration 0001 (habits) hand-written, applied via goose
-- [ ] sqlc wired; all queries hand-written in `db/queries/`
-- [ ] Habits CRUD endpoints behind a small store interface
-- [ ] Integration test against the docker Postgres
+- [x] docker-compose runs Postgres
+- [x] Migration 0001 (habits) hand-written, applied via goose
+- [x] sqlc wired; all queries hand-written in `db/queries/`
+- [ ] Habits CRUD endpoints behind a small store interface — handlers use concrete `*db.Queries`; consumer-defined interface deferred until handler-only tests need it
+- [x] Integration test against the docker Postgres
 - [ ] Mobile: TanStack Query hooks, create-habit form, FlatList, tab layout
 
 Concepts: SQL DDL - database/sql + pgx - sqlc codegen - context.Context everywhere - interfaces defined at the consumer - query invalidation
